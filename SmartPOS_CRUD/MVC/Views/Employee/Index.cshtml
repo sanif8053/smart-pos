@@ -1,0 +1,94 @@
+﻿@model IEnumerable<MVC.Models.mvcEmplyeeModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- DataTales Example -->
+    <div class="card shadow-lg my-5">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Employs</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmpId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmpName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmpEmail)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmpUsername)
+                            </th>
+                           
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpEmail)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpUsername)
+                                </td>
+                                
+                                <td>
+                                    <a href="@Url.Action("AddOrEdit","Employee",new {id=item.EmpId})" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i>
+
+                                    </a>
+                                    <button onclick="Delete(@item.EmpId)" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+
+                        </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section scripts{
+    <script>
+        function message() {
+            var successmessage='@TempData["SuccessMessage"]'
+            var alertmessage = '@TempData["AlertMessage"]'
+            if (successmessage != '') {
+                alertify.success(successmessage);
+            }
+            else if(alertmessage!=''){
+                alertify.error(alertmessage);
+            }
+        }
+        function Delete(id) {
+            alertify.confirm('Employee','Are You Sure to Delete this Product Record?',function(){
+                window.location.href = '@Url.Action("Delete","Employee")/' + id;
+        },null);
+
+        }
+
+    </script>
+
+}

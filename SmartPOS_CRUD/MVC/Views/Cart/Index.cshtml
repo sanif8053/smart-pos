@@ -1,0 +1,250 @@
+﻿@model IEnumerable<MVC.Models.mvcCartModel>
+@using System;
+
+@{ 
+    
+}
+
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <a href="@Url.Action("Index","Product")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add Product</a>
+        @if (Model.Any())
+        {
+            <button class="ui right floated red button" style="margin-left: auto;" onclick="DeleteAll()" id="deletbtn">
+                Delete All
+                <i class="right trash icon"></i>
+            </button>
+            <button class="ui right floated primary button" id="deletbtn" data-toggle="modal" data-target="#logoutModal">
+                Transaction
+                <i class="right soundcloud icon"></i>
+            </button>
+        }
+        
+    </div>
+
+    <div class="ui divided items">
+        @foreach (var item in Model)
+        {
+            @Html.HiddenFor(modelitem => item.ImageId , new { @id = "imageId" })
+            <div class="item">
+                <div class="image">
+                    <img src="@Html.Action("ImageView", "Image", new { id = item.ImageId })">
+                </div>
+                @Html.HiddenFor(modelitem =>item.ProductID,new { @id="ProdId"})
+                <div class="content">
+                    <a class="header" id="ProdName">@item.ProductName</a>
+                    <div class="meta description">
+                        <div class="ui action input">
+
+                            <input type="number" id="@item.CartId" placeholder="Quantity" value="@item.CartQuantity">
+                            <button onclick="UpdateCart(@item.ProductID,@item.CartId,@item.CartQuantity,@item.ImageId)" class="ui vertical animated green button" tabindex="0">
+                                <div class="hidden content"> Add</div>
+                                <div class="visible content ">
+                                    <i class="cart plus icon" style="margin-right: 25px;"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="description">
+                        <p></p>
+                    </div>
+                    <div class="extra">
+                        <div class="ui right floated primary button">
+                            update
+                            <i class="right chevron icon"></i>
+                        </div>
+                        <button class="ui right floated red button" onclick="Delete(@item.CartId)" id="deletbtn">
+                            Delete
+                            <i class="right trash icon"></i>
+                        </button>
+                        <div class="ui label"><i class="stack overflow icon"></i>@Html.DisplayFor(modelItem => item.CartQuantity,new { @id="cartQuantity"})</div>
+                        <div class="ui label"><i class="money bill alternate outline icon"></i> @Html.DisplayFor(modelItem => item.CartTotal)</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-lg my-5">
+
+            <div class="card-body" style="text-align: center;">
+                
+                <img src="~/Content/images/empty_cart.gif" />
+            </div>
+        </div>
+    }
+    <!-- Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Customer Information.</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                @using (Html.BeginForm())
+            {
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <div class="card shadow-lg my-5">
+                            <div class="card-header py-3">
+
+
+                                <h6 class="m-0 font-weight-bold text-primary"> <a href="@Url.Action("Index")"><i class="fa fa-arrow-left"></i></a> Add Customer</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-horizontal">
+
+
+                                    
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12">Customer Name</label>
+
+                                        <div class="col-md-10">
+                                            <input type="text" id="CustName" class="form-control" required />
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12">Customer Email</label>
+                                        <div class="col-md-10">
+                                            <input type="email" id="CustEmail" class="form-control" required />
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12">Customer Category</label>
+                                        <div class="col-md-10">
+                                            <input type="text" id="CustCategory" class="form-control" required />
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                        <button type="submit" onclick="AddCustomer()" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Customer</button>
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts{
+       <script>
+            function AddCustomer() {
+                
+                CustName = document.getElementById("CustName").value
+                CustEmail = document.getElementById("CustEmail").value
+                CustCategory = document.getElementById("CustCategory").value
+                ProductId = document.getElementById("ProdId").value
+                ProductName = document.getElementById("ProdName").value
+                productQuantity = document.getElementById("cartQuantity").value
+                imageId = document.getElementById("imageId").value
+
+                
+                alertify.success(CustName + CustCategory + CustEmail)
+                $.ajax({
+                dataType: "html",
+                type: "POST",
+                url: '@Url.Action("AddModal", "Cart")',
+                    data: {CustName : CustName , CustEmail : CustEmail ,CustCategory : CustCategory },
+                success: function (data) {
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: '@Url.Action("AddOrderByValues", "Order")',
+                        data: { prodId: ProductId, custName: CustName, orderQuantity: productQuantity, imageId: imageId },
+                        success: function (data) {
+
+                            
+                            location.reload(true);
+                            //call is successfully completed and we got result in data
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            //some errror, some show err msg to user and log the error
+                            alert(xhr.responseText);
+
+                        }
+                    });
+                     
+                     
+                    //call is successfully completed and we got result in data
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //some errror, some show err msg to user and log the error
+                    alert(xhr.responseText);
+
+                }
+            });
+            }
+    </script>
+    <script>
+        function UpdateCart(prodId, cartId, oldquantity,imageId) {
+            newquantity = document.getElementById(cartId).value;
+            $.ajax({
+                dataType: "html",
+                type: "POST",
+                url: '@Url.Action("Update","Cart")',
+                data: { prodId: prodId, newQuantity: newquantity, oldQuantity: oldquantity, cartId: cartId, imageId: imageId },
+                success: function (data) {
+
+                    location.reload(true);
+
+
+                    //call is successfully completed and we got result in data
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //some errror, some show err msg to user and log the error
+                    alert(xhr.responseText);
+
+                }
+            });
+
+        }
+        function message() {
+            var successmessage = '@TempData["SuccessMessage"]'
+            var alertmessage = '@TempData["AlertMessage"]'
+            if (successmessage != '') {
+                alertify.success(successmessage);
+            }
+            else if (alertmessage != '') {
+                alertify.error(alertmessage);
+            }
+
+        }
+        function Delete(id) {
+            alertify.confirm('Product', 'Are You Sure to Delete this Item From Cart?', function () {
+                window.location.href = '@Url.Action("Delete","Cart")/' + id;
+            }, null);
+
+        }
+
+        function DeleteAll() {
+            alertify.confirm('Product', 'Are You Sure to Delete All Items From Cart?', function () {
+                window.location.href = '@Url.Action("DeleteAll","Cart")';
+            }, null);
+        }
+
+    </script>
+
+}

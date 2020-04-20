@@ -1,0 +1,217 @@
+﻿@model IEnumerable<MVC.Models.mvcProductModel>
+
+@using MVC.Models;
+
+@{
+    var mycart = new mvcCartModel();
+    ViewBag.Title = "Product List";
+}
+
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <a href="@Url.Action("AddOrEdit")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-gift fa-sm text-white-50"></i> Add Product</a>
+    </div>
+
+    <div class="ui link cards">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <div class="image">
+                    <div uk-lightbox>
+                        <a href="@Html.Action("ImageView", "Image", new { id = item.ImageID })"><img src="@Html.Action("ImageView", "Image", new { id = item.ImageID })" style="width: 290px;height: 225px;"></a>
+                    </div>
+
+                </div>
+
+                <div class="content">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+
+                        <div class="header"><b>@Html.DisplayFor(modelitem => item.ProdName)</b></div>
+                        <a href="@Url.Action("AddOrEdit","Product",new { id=item.ProdId})" class="ui inverted violet d-none d-sm-inline-block icon button circular" style="margin-left: auto;">
+                            <i class="edit outline icon"></i>
+                        </a>
+
+                        <button class="ui inverted red icon button circular" onclick="Delete(@item.ProdId)">
+                            <i class="trash alternate outline icon"></i>
+                        </button>
+                    </div>
+                    <div class="extra">
+                        Rating:
+                        <div class="ui star rating" data-rating="4"></div>
+                    </div>
+                    <b>
+                        <div class="meta">
+                            <a>@Html.DisplayFor(modelitem => item.ProdCatageory)</a>
+                        </div>
+                    </b>
+                    <div class="description">
+                        <div class="ui action input">
+                            
+                            <input type="number" id="@item.ProdId" placeholder="Quantity">
+                            <button onclick="AddCart(@item.ProdQuantity,@item.ProdId,@item.ProdPrice,@item.ImageID)" class="ui vertical animated green button " tabindex="0">
+                                <div class="hidden content">Buy</div>
+                                <div class="visible content">
+                                    <i class="cart plus icon"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="extra content">
+                    <span class="right floated">
+                        Total: @Html.DisplayFor(modelitem => item.ProdQuantity)
+                    </span>
+                    <span>
+                        <b>
+                            <i class="money bill alternate icon"></i>
+                            @Html.DisplayFor(modelitem => item.ProdPrice)
+                        </b>
+                    </span>
+
+                </div>
+            </div>
+
+        }
+
+    </div>
+    <div class="ui basic modal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Archive Old Messages
+        </div>
+        <div class="content">
+            <p>Your inbox is getting full, would you like us to enable automatic archiving of old messages?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <!-- Compiled and minified J
+    avaScript -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnclick").click(function () {
+                
+            });
+        });
+    </script>
+    <script>
+        function AddCart(actualQuantity,prodId,prodPrice,imageId){
+            quantity = document.getElementById(prodId).value;
+            if(actualQuantity<quantity){
+                alertify.error("Only "+actualQuantity+" Products are available ");
+            }
+            else {
+                
+                total = quantity * prodPrice;
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: '@Url.Action("Add","Cart")',
+                    data: { total: total, prodId: prodId, quantity: quantity,imageId : imageId},
+                    success: function (data) {
+                        
+                        $.ajax({
+                            dataType: "html",
+                            type: "POST",
+                            url: '@Url.Action("UpdateQuantity", "Product")',
+                            data: { id: prodId, reducequantity: quantity},
+                            success: function (data) {
+
+                                location.reload(true);
+                                alert.success("added")
+                                //call is successfully completed and we got result in data
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                //some errror, some show err msg to user and log the error  
+                                alert(xhr.responseText);
+
+                            }
+                        });
+                        //call is successfully completed and we got result in data
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        //some errror, some show err msg to user and log the error  
+                        alert(xhr.responseText);
+
+                    }
+                });
+               
+
+                //alertify.error(cart.quantity + " " + cart.total);
+               
+            }
+
+        }
+        function message() {
+            var successmessage='@TempData["SuccessMessage"]'
+            var alertmessage = '@TempData["AlertMessage"]'
+            if (successmessage != '') {
+                alertify.success(successmessage);
+            }
+            else if(alertmessage!=''){
+                alertify.error(alertmessage);
+            }
+        }
+        function Delete(id) {
+            alertify.confirm('Employee', 'Are You Sure to Delete this Product Record?', function () {
+                window.location.href = '@Url.Action("Delete","Product")/' + id;
+            }, null);
+        }
+    </script>
+    
+    <script>
+        semantic.card = {};
+
+        // ready event
+        semantic.card.ready = function () {
+            $('.special.cards .image').dimmer({
+                on: 'hover'
+            });
+        }
+    </script>
+
+
+
+    <script>
+        $(document).ajaxSend(function () {
+            // TODO: show your animation
+            $('#loading').show();
+        }).ajaxComplete(function () {
+            // TODO: hide your animation
+            $('#loading').hide();
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.carousel');
+            var instances = M.Carousel.init(elems, options);
+        });
+    </script>
+
+    // Or with jQuery
+    <script>
+        $(document).ready(function () {
+            $('.carousel').carousel();
+
+        });
+    </script>
+
+}

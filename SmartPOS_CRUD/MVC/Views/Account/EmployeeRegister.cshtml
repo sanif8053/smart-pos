@@ -1,0 +1,103 @@
+﻿@model MVC.Models.EmployeeRegisterViewModel
+
+@{
+    ViewBag.Title = "EmployeeRegister";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+@using (Html.BeginForm("EmployeeRegister", "Account", FormMethod.Post, new { @class = "login100-form validate-form", role = "form" })){
+                @Html.AntiForgeryToken()
+
+    <span class="login100-form-title">
+        Register As An Employee
+    </span>
+
+    <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+        @Html.TextBoxFor(m => m.EmployeeName, new { placeholder = "Name", @class = "input100" })
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+            <i class="fa fa-user" aria-hidden="true"></i>
+        </span>
+    </div>
+    
+    <div class="wrap-input100 ">
+        <select name="ShopName" class="input100">
+            <option value="" disabled selected>Choose your Shop</option>
+            
+            @{
+                foreach (var shop in Model.ShopList)
+                {
+                    <option value="@shop.Name" data-icon="~/Content/images/icons/sample-1.jpg">@shop.Name</option>
+                }
+            }
+        </select>
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+            <i class="fa fa-home" aria-hidden="true"></i>
+        </span>
+    </div>
+    <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+        @Html.TextBoxFor(m => m.Email, new { placeholder = "Email", @class = "input100" })
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+        </span>
+    </div>
+
+    <div class="wrap-input100 validate-input" data-validate="Password is required">
+        @Html.PasswordFor(m => m.Password, new { placeholder = "Enter Password", @class = "input100" })
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+        </span>
+    </div>
+
+    <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
+        @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "input100" })
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+        </span>
+    </div>
+
+    <div class="container-login100-form-btn">
+        <button type="submit" class="login100-form-btn">
+            Sign up
+        </button>
+    </div>
+
+
+    
+
+    <div class="text-center p-t-50">
+        <a class="txt2" href="@Url.Action("Register")">
+            Register as Shop Admin
+
+        </a>
+        <br />
+        <a class="txt2" href="@Url.Action("Login")">
+            Login
+            <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+        </a>
+    </div>
+}
+
+@section scripts
+     {
+    <script>
+        function message() {
+
+			var alertmessage = '@TempData["AlertMessage"]';
+			var successmessage = '@TempData["SuccessMessage"]';
+			if(alertmessage!=''){
+				alertify.error(alertmessage);
+			}
+			else if (successmessage!=''){
+				alertify.success(successmessage);
+			}
+			alert.success("I'm Here");
+		}
+    </script>
+
+
+}

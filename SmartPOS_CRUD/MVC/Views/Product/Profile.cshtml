@@ -1,0 +1,165 @@
+﻿@model IEnumerable<MVC.Models.mvcProductModel>
+
+
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">\
+<!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <a href="@Url.Action("AddOrEdit")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add Product</a>
+    </div>
+    
+    <div class="ui link cards">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <div class="image">
+                    <div uk-lightbox>
+                        <a href="~/Content/images/office.jpg"><img src="~/Content/images/office.jpg"></a>
+                    </div>
+                    
+                </div>
+                
+                <div class="content">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        
+                        <div class="header"><b>@Html.DisplayFor(modelitem => item.ProdName)</b></div>
+                        <a href="@Url.Action("AddOrEdit","Product",new { id=item.ProdId})" class="ui inverted violet d-none d-sm-inline-block icon button circular" style="margin-left: auto;">
+                            <i class="edit outline icon"></i>
+                        </a>
+
+                        <button class="ui inverted red icon button circular" onclick="Delete(@item.ProdId)">
+                            <i class="trash alternate outline icon"></i>
+                        </button>
+                    </div>
+                        <b>
+                            <div class="meta">
+                                <a>@Html.DisplayFor(modelitem => item.ProdCatageory)</a>
+                            </div>
+                        </b>
+                        <div class="description">
+                            <div class="ui action input">
+                                
+                                <input type="number" placeholder="Quantity">
+                                <div class="ui vertical animated green button " tabindex="0">
+                                    <div class="hidden content">Shop</div>
+                                    <div class="visible content">
+                                        <i class="shop icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="extra content">
+                    <span class="right floated">
+                        Total: @Html.DisplayFor(modelitem => item.ProdQuantity)
+                    </span>
+                    <span>
+                        <b>
+                            <i class="money bill alternate icon"></i>
+                            @Html.DisplayFor(modelitem => item.ProdPrice)
+                        </b>
+                    </span>
+
+                </div>
+            </div>
+           
+        }
+
+    </div>
+    <div class="ui basic modal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Archive Old Messages
+        </div>
+        <div class="content">
+            <p>Your inbox is getting full, would you like us to enable automatic archiving of old messages?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <!-- Compiled and minified J
+    avaScript -->
+
+    <script>
+        function message() {
+            var successmessage='@TempData["SuccessMessage"]'
+            var alertmessage = '@TempData["AlertMessage"]'
+            if (successmessage != '') {
+                alertify.success(successmessage);
+            }
+            else if(alertmessage!=''){
+                alertify.error(alertmessage);
+            }
+        }
+        function Delete(id) {
+            alertify.confirm('Employee', 'Are You Sure to Delete this Product Record?', function () {
+                window.location.href = '@Url.Action("Delete","Product")/' + id;
+            }, null);
+        }
+    </script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
+    <script>
+        semantic.card = {};
+
+        // ready event
+        semantic.card.ready = function () {
+            $('.special.cards .image').dimmer({
+                on: 'hover'
+            });
+        }
+    </script>
+
+
+
+    <script>
+        $(document).ajaxSend(function () {
+            // TODO: show your animation
+            $('#loading').show();
+        }).ajaxComplete(function () {
+            // TODO: hide your animation
+            $('#loading').hide();
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.carousel');
+            var instances = M.Carousel.init(elems, options);
+        });
+    </script>
+
+    // Or with jQuery
+    <script>
+        $(document).ready(function () {
+            $('.carousel').carousel();
+
+        });
+    </script>
+
+}

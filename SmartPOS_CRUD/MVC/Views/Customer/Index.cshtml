@@ -1,0 +1,95 @@
+﻿@model IEnumerable<MVC.Models.mvcCustomerModel>
+
+@{
+    ViewBag.Title = "All";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <a href="@Url.Action("AddOrEdit")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add Customer</a>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow-lg my-5">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Customers</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustEmail)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustCategory)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustEmail)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustCategory)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("AddOrEdit","Customer",new {id=item.CustId})" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="Delete(@item.CustId)" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section scripts{
+    <script>
+        function message() {
+            var successmessage='@TempData["SuccessMessage"]'
+            var alertmessage = '@TempData["AlertMessage"]'
+            if (successmessage != '') {
+                alertify.success(successmessage);
+            }
+            else if(alertmessage!=''){
+                alertify.error(alertmessage);
+            }
+
+        }
+        function Delete(id) {
+            alertify.confirm('Employee','Are You Sure to Delete this Customer Record?',function(){
+                window.location.href = '@Url.Action("Delete","Customer")/' + id;
+        },null);
+
+        }
+    </script>
+
+
+}

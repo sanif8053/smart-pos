@@ -1,0 +1,104 @@
+﻿@model MVC.Models.mvcCustomerModel
+
+@{ 
+    Layout = null;
+}
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Customer Information.</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            @using (Html.BeginForm())
+            {
+                
+                @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="card shadow-lg my-5">
+                    <div class="card-header py-3">
+
+
+                        <h6 class="m-0 font-weight-bold text-primary"> <a href="@Url.Action("Index")"><i class="fa fa-arrow-left"></i></a> Add Customer</h6>
+                    </div>
+                    <div class="card-body">
+                            <div class="form-horizontal">
+
+                                
+
+                                <div class="form-group">
+
+                                    @Html.LabelFor(model => model.CustName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        <input type="text" id="CustName" class = "form-control" required/> 
+                                        @Html.ValidationMessageFor(model => model.CustName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        <input type="email" id="CustEmail" class="form-control" required/> 
+                                        @Html.ValidationMessageFor(model => model.CustEmail, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustCategory, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        <input type="text" id="CustCategory" class="form-control" required /> 
+                                        @Html.ValidationMessageFor(model => model.CustCategory, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+               
+                <button type="submit" onclick="AddCustomer()" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Customer</button>
+                
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+        <script>
+            function AddCustomer() {
+                alertify.success("Mn yahan hon")
+                CustName = document.getElementById("CustName")
+                CustEmail = document.getElementById("CustEmail")
+                CustCategory = document.getElementById("CustCategory")
+                $.ajax({
+                dataType: "html",
+                type: "POST",
+                url: '@Url.Action("AddModal", "Cart")',
+                data: {CustName : CustName , CustEmail : CustEmail ,CustCategory : CustCategory },
+                success: function (data) {
+                       
+
+                    location.reload(true);
+                    //call is successfully completed and we got result in data
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //some errror, some show err msg to user and log the error  
+                    alert(xhr.responseText);
+
+                }
+            });
+            }
+        </script>
+    
+    }
